@@ -1,11 +1,6 @@
 package com.googlecode.stateless4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.collections.ListUtils;
+import java.util.*;
 
 import com.googlecode.stateless4j.delegates.Action1;
 import com.googlecode.stateless4j.delegates.Action2;
@@ -17,15 +12,14 @@ import com.googlecode.stateless4j.validation.Enforce;
 public class StateRepresentation<TState, TTrigger> {
   final TState _state;
 
-  final Map<TTrigger, List<TriggerBehaviour<TState, TTrigger>>> _triggerBehaviours =
-          new HashMap<TTrigger, List<TriggerBehaviour<TState, TTrigger>>>();
+  final Map<TTrigger, List<TriggerBehaviour<TState, TTrigger>>> _triggerBehaviours = new HashMap<>();
 
-  final List<Action2<Transition<TState, TTrigger>, Object[]>> _entryActions = new ArrayList<Action2<Transition<TState, TTrigger>, Object[]>>();
-  final List<Action1<Transition<TState, TTrigger>>> _exitActions = new ArrayList<Action1<Transition<TState, TTrigger>>>();
+  final List<Action2<Transition<TState, TTrigger>, Object[]>> _entryActions = new ArrayList<>();
+  final List<Action1<Transition<TState, TTrigger>>> _exitActions = new ArrayList<>();
 
   StateRepresentation<TState, TTrigger> _superstate; // null
 
-  final List<StateRepresentation<TState, TTrigger>> _substates = new ArrayList<StateRepresentation<TState, TTrigger>>();
+  final List<StateRepresentation<TState, TTrigger>> _substates = new ArrayList<>();
 
   public StateRepresentation(TState state) {
     _state = state;
@@ -55,7 +49,7 @@ public class StateRepresentation<TState, TTrigger> {
     }
     possible = _triggerBehaviours.get(trigger);
 
-    List<TriggerBehaviour<TState, TTrigger>> actual = new ArrayList<TriggerBehaviour<TState, TTrigger>>();
+    List<TriggerBehaviour<TState, TTrigger>> actual = new ArrayList<>();
     for (TriggerBehaviour<TState, TTrigger> triggerBehaviour : possible) {
       if (triggerBehaviour.isGuardConditionMet()) {
         actual.add(triggerBehaviour);
@@ -175,7 +169,7 @@ public class StateRepresentation<TState, TTrigger> {
 
   @SuppressWarnings("unchecked")
   public List<TTrigger> getPermittedTriggers() {
-    List<TTrigger> result = new ArrayList<TTrigger>();
+    Set result = new HashSet<TTrigger>();
 
     for (TTrigger t : _triggerBehaviours.keySet()) {
       Boolean isOk = false;
@@ -189,9 +183,10 @@ public class StateRepresentation<TState, TTrigger> {
       }
     }
 
-    if (getSuperstate() != null)
-      result = ListUtils.sum(result, getSuperstate().getPermittedTriggers());
+    if (getSuperstate() != null) {
+      result.addAll(getSuperstate().getPermittedTriggers());
+    }
 
-    return result;
+    return new ArrayList<TTrigger>(result);
   }
 }
