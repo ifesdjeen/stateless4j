@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 
-public class StateRepresentationFixture {
+public class StateRepresentationFixtureTest {
   Transition<State, Trigger> actualTransition = null;
 
   @Test
@@ -328,14 +328,14 @@ public class StateRepresentationFixture {
   @Test
   public void WhenTransitionDoesNotExist_TriggerCannotBeFired() {
     StateRepresentation<State, Trigger> rep = CreateRepresentation(State.B);
-    rep.AddTriggerBehaviour(new IgnoredTriggerBehaviour<State, Trigger>(Trigger.X, IgnoredTriggerBehaviourFixture.returnTrue));
+    rep.AddTriggerBehaviour(new IgnoredTriggerBehaviour<State, Trigger>(Trigger.X, IgnoredTriggerBehaviourFixtureTest.returnTrue));
     Assert.assertTrue(rep.CanHandle(Trigger.X));
   }
 
   @Test
   public void WhenTransitionExistsInSupersate_TriggerCanBeFired() throws Exception {
     StateRepresentation<State, Trigger> rep = CreateRepresentation(State.B);
-    rep.AddTriggerBehaviour(new IgnoredTriggerBehaviour<State, Trigger>(Trigger.X, IgnoredTriggerBehaviourFixture.returnTrue));
+    rep.AddTriggerBehaviour(new IgnoredTriggerBehaviour<State, Trigger>(Trigger.X, IgnoredTriggerBehaviourFixtureTest.returnTrue));
     StateRepresentation<State, Trigger> sub = CreateRepresentation(State.C);
     sub.setSuperstate(rep);
     rep.AddSubstate(sub);

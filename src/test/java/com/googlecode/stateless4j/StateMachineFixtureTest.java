@@ -11,7 +11,7 @@ import com.googlecode.stateless4j.delegates.Action;
 import com.googlecode.stateless4j.delegates.Func;
 
 
-public class StateMachineFixture {
+public class StateMachineFixtureTest {
   final String
           StateA = "A", StateB = "B", StateC = "C",
           TriggerX = "X", TriggerY = "Y";
@@ -139,8 +139,8 @@ public class StateMachineFixture {
     StateMachine<State, Trigger> sm = new StateMachine<State, Trigger>(State.B);
 
     sm.Configure(State.B)
-            .PermitIf(Trigger.X, State.A, IgnoredTriggerBehaviourFixture.returnFalse)
-            .PermitIf(Trigger.X, State.C, IgnoredTriggerBehaviourFixture.returnTrue);
+            .PermitIf(Trigger.X, State.A, IgnoredTriggerBehaviourFixtureTest.returnFalse)
+            .PermitIf(Trigger.X, State.C, IgnoredTriggerBehaviourFixtureTest.returnTrue);
 
     sm.Fire(Trigger.X);
 

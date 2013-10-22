@@ -8,7 +8,7 @@ import com.googlecode.stateless4j.delegates.Func;
 import com.googlecode.stateless4j.delegates.Func2;
 import com.googlecode.stateless4j.triggers.TriggerWithParameters1;
 
-public class DynamicTriggerBehaviour {
+public class DynamicTriggerBehaviourTest {
   @Test
   public void DestinationStateIsDynamic() throws Exception {
     StateMachine<State, Trigger> sm = new StateMachine<State, Trigger>(State.A);

@@ -8,7 +8,7 @@ import com.googlecode.stateless4j.triggers.TriggerWithParameters1;
 import com.googlecode.stateless4j.triggers.TriggerWithParameters2;
 
 
-public class TriggerWithParametersFixture {
+public class TriggerWithParametersFixtureTest {
   @Test
   public void DescribesUnderlyingTrigger() throws Exception {
     TriggerWithParameters1<String, State, Trigger> twp = new TriggerWithParameters1<String, State, Trigger>(Trigger.X, String.class);

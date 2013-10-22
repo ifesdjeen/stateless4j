@@ -6,7 +6,7 @@ import org.junit.Test;
 import com.googlecode.stateless4j.transitions.Transition;
 
 
-public class TransitionFixture {
+public class TransitionFixtureTest {
 
   @Test
   public void IdentityTransitionIsNotChange() {

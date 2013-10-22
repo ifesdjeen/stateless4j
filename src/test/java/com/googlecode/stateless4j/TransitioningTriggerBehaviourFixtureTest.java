@@ -6,11 +6,13 @@ import org.junit.Test;
 import com.googlecode.stateless4j.transitions.TransitioningTriggerBehaviour;
 
 
-public class TransitioningTriggerBehaviourFixture {
+public class TransitioningTriggerBehaviourFixtureTest {
+
   @Test
   public void TransitionsToDestinationState() {
-    TransitioningTriggerBehaviour<State, Trigger> transtioning = new TransitioningTriggerBehaviour<State, Trigger>(Trigger.X, State.C, IgnoredTriggerBehaviourFixture.returnTrue);
+    TransitioningTriggerBehaviour<State, Trigger> transtioning = new TransitioningTriggerBehaviour<State, Trigger>(Trigger.X, State.C, IgnoredTriggerBehaviourFixtureTest.returnTrue);
     State destination = transtioning.ResultsInTransitionFrom(State.B, new Object[0]);
     Assert.assertEquals(State.C, destination);
   }
+
 }
