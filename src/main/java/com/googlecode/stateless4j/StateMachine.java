@@ -3,6 +3,7 @@ package com.googlecode.stateless4j;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,10 @@ import com.googlecode.stateless4j.delegates.Action1;
 import com.googlecode.stateless4j.delegates.Action2;
 import com.googlecode.stateless4j.delegates.Func;
 import com.googlecode.stateless4j.delegates.Func2;
+import com.googlecode.stateless4j.exceptions.CannotReconfigureParameters;
+import com.googlecode.stateless4j.exceptions.StateMachineConfigurationException;
+import com.googlecode.stateless4j.exceptions.TriggerIgnoredException;
+import com.googlecode.stateless4j.exceptions.UnhandledTriggerActionException;
 import com.googlecode.stateless4j.resources.StateMachineResources;
 import com.googlecode.stateless4j.transitions.Transition;
 import com.googlecode.stateless4j.transitions.TransitioningTriggerBehaviour;
@@ -21,7 +26,8 @@ import com.googlecode.stateless4j.triggers.TriggerWithParameters;
 import com.googlecode.stateless4j.triggers.TriggerWithParameters1;
 import com.googlecode.stateless4j.triggers.TriggerWithParameters2;
 import com.googlecode.stateless4j.triggers.TriggerWithParameters3;
-import com.googlecode.stateless4j.validation.Enforce;
+
+import javax.annotation.Nonnull;
 
 
 /// <summary>
@@ -30,17 +36,16 @@ import com.googlecode.stateless4j.validation.Enforce;
 /// <typeparam name="TState">The type used to represent the states.</typeparam>
 /// <typeparam name="TTrigger">The type used to represent the triggers that cause state transitions.</typeparam>
 public class StateMachine<TState, TTrigger> {
+
   final Map<TState, StateRepresentation<TState, TTrigger>> _stateConfiguration = new HashMap<TState, StateRepresentation<TState, TTrigger>>();
   final Map<TTrigger, TriggerWithParameters<TState, TTrigger>> _triggerConfiguration = new HashMap<TTrigger, TriggerWithParameters<TState, TTrigger>>();
   final Func<TState> _stateAccessor;
   final Action1<TState> _stateMutator;
-  Action2<TState, TTrigger> _unhandledTriggerAction = new Action2<TState, TTrigger>() {
 
-    public void doIt(TState state, TTrigger trigger) throws Exception {
-      throw new Exception(
-                                 String.format(
-                                                      StateMachineResources.NoTransitionsPermitted,
-                                                      trigger, state));
+  Action2<TState, TTrigger> _unhandledTriggerAction = new Action2<TState, TTrigger>() {
+    public void doIt(TState state, TTrigger trigger) {
+//      throw new Exception(String.format(StateMachineResources.NoTransitionsPermitted,
+//                                        trigger, state));
     }
 
   };
@@ -105,7 +110,7 @@ public class StateMachine<TState, TTrigger> {
   /// </summary>
   /// <param name="state">The state to configure.</param>
   /// <returns>A configuration object through which the state can be configured.</returns>
-  public StateConfiguration<TState, TTrigger> Configure(TState state) throws Exception {
+  public StateConfiguration<TState, TTrigger> Configure(TState state) {
     return new StateConfiguration<TState, TTrigger>(GetRepresentation(state), new Func2<TState, StateRepresentation<TState, TTrigger>>() {
 
       public StateRepresentation<TState, TTrigger> call(TState arg0) {
@@ -123,7 +128,7 @@ public class StateMachine<TState, TTrigger> {
   /// <param name="trigger">The trigger to fire.</param>
   /// <exception cref="System.InvalidOperationException">The current state does
   /// not allow the trigger to be fired.</exception>
-  public void Fire(TTrigger trigger) throws Exception {
+  public void Fire(TTrigger trigger) throws StateMachineConfigurationException {
     publicFire(trigger, new Object[0]);
   }
 
@@ -138,8 +143,8 @@ public class StateMachine<TState, TTrigger> {
   /// <param name="arg0">The first argument.</param>
   /// <exception cref="System.InvalidOperationException">The current state does
   /// not allow the trigger to be fired.</exception>
-  public <TArg0> void Fire(TriggerWithParameters1<TArg0, TState, TTrigger> trigger, TArg0 arg0) throws Exception {
-    Enforce.ArgumentNotNull(trigger, "trigger");
+  public <TArg0> void Fire(@Nonnull TriggerWithParameters1<TArg0, TState, TTrigger> trigger,
+                           TArg0 arg0) throws StateMachineConfigurationException {
     publicFire(trigger.getTrigger(), arg0);
   }
 
@@ -156,8 +161,9 @@ public class StateMachine<TState, TTrigger> {
   /// <param name="trigger">The trigger to fire.</param>
   /// <exception cref="System.InvalidOperationException">The current state does
   /// not allow the trigger to be fired.</exception>
-  public <TArg0, TArg1> void Fire(TriggerWithParameters2<TArg0, TArg1, TState, TTrigger> trigger, TArg0 arg0, TArg1 arg1) throws Exception {
-    Enforce.ArgumentNotNull(trigger, "trigger");
+  public <TArg0, TArg1> void Fire(@Nonnull TriggerWithParameters2<TArg0, TArg1, TState, TTrigger> trigger,
+                                  TArg0 arg0,
+                                  TArg1 arg1) throws StateMachineConfigurationException {
     publicFire(trigger.getTrigger(), arg0, arg1);
   }
 
@@ -176,12 +182,14 @@ public class StateMachine<TState, TTrigger> {
   /// <param name="trigger">The trigger to fire.</param>
   /// <exception cref="System.InvalidOperationException">The current state does
   /// not allow the trigger to be fired.</exception>
-  public <TArg0, TArg1, TArg2> void Fire(TriggerWithParameters3<TArg0, TArg1, TArg2, TState, TTrigger> trigger, TArg0 arg0, TArg1 arg1, TArg2 arg2) throws Exception {
-    Enforce.ArgumentNotNull(trigger, "trigger");
+  public <TArg0, TArg1, TArg2> void Fire(@Nonnull TriggerWithParameters3<TArg0, TArg1, TArg2, TState, TTrigger> trigger,
+                                         TArg0 arg0,
+                                         TArg1 arg1,
+                                         TArg2 arg2) throws StateMachineConfigurationException {
     publicFire(trigger.getTrigger(), arg0, arg1, arg2);
   }
 
-  void publicFire(TTrigger trigger, Object... args) throws Exception {
+  void publicFire(TTrigger trigger, Object... args) throws StateMachineConfigurationException {
     TriggerWithParameters<TState, TTrigger> configuration;
     if (_triggerConfiguration.containsKey(trigger)) {
       configuration = _triggerConfiguration.get(trigger);
@@ -216,8 +224,8 @@ public class StateMachine<TState, TTrigger> {
   /// is fired.
   /// </summary>
   /// <param name="unhandledTriggerAction">An action to call when an unhandled trigger is fired.</param>
-  public void OnUnhandledTrigger(Action2<TState, TTrigger> unhandledTriggerAction) throws Exception {
-    if (unhandledTriggerAction == null) throw new Exception("unhandledTriggerAction");
+  public void OnUnhandledTrigger(Action2<TState, TTrigger> unhandledTriggerAction) throws UnhandledTriggerActionException {
+    if (unhandledTriggerAction == null) throw new UnhandledTriggerActionException();
     _unhandledTriggerAction = unhandledTriggerAction;
   }
 
@@ -265,7 +273,7 @@ public class StateMachine<TState, TTrigger> {
   /// <param name="trigger">The underlying trigger value.</param>
   /// <returns>An object that can be passed to the Fire() method in order to
   /// fire the parameterised trigger.</returns>
-  public <TArg0> TriggerWithParameters1<TArg0, TState, TTrigger> SetTriggerParameters(TTrigger trigger, Class<TArg0> classe0) throws Exception {
+  public <TArg0> TriggerWithParameters1<TArg0, TState, TTrigger> SetTriggerParameters(TTrigger trigger, Class<TArg0> classe0) throws CannotReconfigureParameters {
     TriggerWithParameters1<TArg0, TState, TTrigger> configuration = new TriggerWithParameters1<TArg0, TState, TTrigger>(trigger, classe0);
     SaveTriggerConfiguration(configuration);
     return configuration;
@@ -279,7 +287,7 @@ public class StateMachine<TState, TTrigger> {
   /// <param name="trigger">The underlying trigger value.</param>
   /// <returns>An object that can be passed to the Fire() method in order to
   /// fire the parameterised trigger.</returns>
-  public <TArg0, TArg1> TriggerWithParameters2<TArg0, TArg1, TState, TTrigger> SetTriggerParameters(TTrigger trigger, Class<TArg0> classe0, Class<TArg1> classe1) throws Exception {
+  public <TArg0, TArg1> TriggerWithParameters2<TArg0, TArg1, TState, TTrigger> SetTriggerParameters(TTrigger trigger, Class<TArg0> classe0, Class<TArg1> classe1) throws CannotReconfigureParameters {
     TriggerWithParameters2<TArg0, TArg1, TState, TTrigger> configuration = new TriggerWithParameters2<TArg0, TArg1, TState, TTrigger>(trigger, classe0, classe1);
     SaveTriggerConfiguration(configuration);
     return configuration;
@@ -294,21 +302,22 @@ public class StateMachine<TState, TTrigger> {
   /// <param name="trigger">The underlying trigger value.</param>
   /// <returns>An object that can be passed to the Fire() method in order to
   /// fire the parameterised trigger.</returns>
-  public <TArg0, TArg1, TArg2> TriggerWithParameters3<TArg0, TArg1, TArg2, TState, TTrigger> SetTriggerParameters(TTrigger trigger, Class<TArg0> classe0, Class<TArg1> classe1, Class<TArg2> classe2) throws Exception {
+  public <TArg0, TArg1, TArg2> TriggerWithParameters3<TArg0, TArg1, TArg2, TState, TTrigger> SetTriggerParameters(TTrigger trigger, Class<TArg0> classe0, Class<TArg1> classe1, Class<TArg2> classe2)
+          throws CannotReconfigureParameters
+  {
     TriggerWithParameters3<TArg0, TArg1, TArg2, TState, TTrigger> configuration = new TriggerWithParameters3<TArg0, TArg1, TArg2, TState, TTrigger>(trigger, classe0, classe1, classe2);
     SaveTriggerConfiguration(configuration);
     return configuration;
   }
 
-  void SaveTriggerConfiguration(TriggerWithParameters<TState, TTrigger> trigger) throws Exception {
+  void SaveTriggerConfiguration(TriggerWithParameters<TState, TTrigger> trigger) throws CannotReconfigureParameters {
     if (_triggerConfiguration.containsKey(trigger.getTrigger()))
-      throw new Exception(
-                                 String.format(StateMachineResources.CannotReconfigureParameters, trigger));
+      throw new CannotReconfigureParameters();
 
     _triggerConfiguration.put(trigger.getTrigger(), trigger);
   }
 
-  public void GenerateDotFileInto(OutputStream dotFile) throws Exception {
+  public void GenerateDotFileInto(OutputStream dotFile) throws UnsupportedEncodingException, TriggerIgnoredException {
     OutputStreamWriter w = new OutputStreamWriter(dotFile, "UTF-8");
     PrintWriter writer = new PrintWriter(w);
     writer.write("digraph G {\n");

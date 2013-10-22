@@ -1,29 +1,30 @@
 package com.googlecode.stateless4j.triggers;
 
 import com.googlecode.stateless4j.conversion.ParameterConversion;
-import com.googlecode.stateless4j.validation.Enforce;
+import com.googlecode.stateless4j.exceptions.StateMachineConfigurationException;
+import com.googlecode.stateless4j.exceptions.TooManyParameters;
+
+import javax.annotation.Nonnull;
 
 public abstract class TriggerWithParameters<TState, TTrigger> {
-  final TTrigger _underlyingTrigger;
-  final Class<?>[] _argumentTypes;
+  final TTrigger underlyingTrigger;
+  final Class<?>[] argumentTypes;
 
   /// <summary>
   /// Create a configured trigger.
   /// </summary>
   /// <param name="underlyingTrigger">Trigger represented by this trigger configuration.</param>
   /// <param name="argumentTypes">The argument types expected by the trigger.</param>
-  public TriggerWithParameters(TTrigger underlyingTrigger, Class<?>... argumentTypes) throws Exception {
-    Enforce.ArgumentNotNull(argumentTypes, "argumentTypes");
-
-    _underlyingTrigger = underlyingTrigger;
-    _argumentTypes = argumentTypes;
+  public TriggerWithParameters(@Nonnull TTrigger underlyingTrigger, Class<?>... argumentTypes) {
+    this.underlyingTrigger = underlyingTrigger;
+    this.argumentTypes = argumentTypes;
   }
 
   /// <summary>
   /// Gets the underlying trigger value that has been configured.
   /// </summary>
   public TTrigger getTrigger() {
-    return _underlyingTrigger;
+    return underlyingTrigger;
   }
 
   /// <summary>
@@ -31,9 +32,7 @@ public abstract class TriggerWithParameters<TState, TTrigger> {
   /// trigger.
   /// </summary>
   /// <param name="args"></param>
-  public void ValidateParameters(Object[] args) throws Exception {
-    Enforce.ArgumentNotNull(args, "args");
-
-    ParameterConversion.Validate(args, _argumentTypes);
+  public void ValidateParameters(@Nonnull Object[] args) throws StateMachineConfigurationException {
+    ParameterConversion.Validate(args, argumentTypes);
   }
 }

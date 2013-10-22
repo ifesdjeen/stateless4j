@@ -1,6 +1,7 @@
 package com.googlecode.stateless4j.triggers;
 
 import com.googlecode.stateless4j.delegates.Func;
+import com.googlecode.stateless4j.exceptions.TriggerIgnoredException;
 
 
 public abstract class TriggerBehaviour<TState, TTrigger> {
@@ -20,5 +21,5 @@ public abstract class TriggerBehaviour<TState, TTrigger> {
     return _guard.call();
   }
 
-  public abstract TState ResultsInTransitionFrom(TState source, Object... args) throws Exception;
+  public abstract TState ResultsInTransitionFrom(TState source, Object... args) throws TriggerIgnoredException;
 }

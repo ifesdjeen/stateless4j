@@ -5,7 +5,7 @@ public class TriggerWithParameters1<TArg0, TState, TTrigger> extends TriggerWith
   /// Create a configured trigger.
   /// </summary>
   /// <param name="underlyingTrigger">Trigger represented by this trigger configuration.</param>
-  public TriggerWithParameters1(TTrigger underlyingTrigger, Class<TArg0> classe) throws Exception {
+  public TriggerWithParameters1(TTrigger underlyingTrigger, Class<TArg0> classe) {
     super(underlyingTrigger, classe);
   }
 }

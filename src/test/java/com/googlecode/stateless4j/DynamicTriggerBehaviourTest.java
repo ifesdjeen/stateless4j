@@ -30,7 +30,7 @@ public class DynamicTriggerBehaviourTest {
     TriggerWithParameters1<Integer, State, Trigger> trigger = sm.SetTriggerParameters(
                                                                                              Trigger.X, Integer.class);
     sm.Configure(State.A).PermitDynamic(trigger, new Func2<Integer, State>() {
-      public State call(Integer i) throws Exception {
+      public State call(Integer i) {
         return i == 1 ? State.B : State.C;
       }
     });

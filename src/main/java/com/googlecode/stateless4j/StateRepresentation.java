@@ -7,7 +7,8 @@ import com.googlecode.stateless4j.delegates.Action2;
 import com.googlecode.stateless4j.resources.StateRepresentationResources;
 import com.googlecode.stateless4j.transitions.Transition;
 import com.googlecode.stateless4j.triggers.TriggerBehaviour;
-import com.googlecode.stateless4j.validation.Enforce;
+
+import javax.annotation.Nonnull;
 
 public class StateRepresentation<TState, TTrigger> {
   final TState _state;
@@ -67,29 +68,25 @@ public class StateRepresentation<TState, TTrigger> {
     return handler;
   }
 
-  public void AddEntryAction(final TTrigger trigger, final Action2<Transition<TState, TTrigger>, Object[]> action) throws Exception {
-    Enforce.ArgumentNotNull(action, "action");
-
-
+  public void AddEntryAction(final TTrigger trigger,
+                             @Nonnull final Action2<Transition<TState, TTrigger>, Object[]> action) {
     _entryActions.add(new Action2<Transition<TState, TTrigger>, Object[]>() {
-      public void doIt(Transition<TState, TTrigger> t, Object[] args) throws Exception {
+      public void doIt(Transition<TState, TTrigger> t, Object[] args) {
         if (t.getTrigger().equals(trigger))
           action.doIt(t, args);
       }
     });
   }
 
-  public void AddEntryAction(Action2<Transition<TState, TTrigger>, Object[]> action) throws Exception {
-    _entryActions.add(Enforce.ArgumentNotNull(action, "action"));
+  public void AddEntryAction(@Nonnull Action2<Transition<TState, TTrigger>, Object[]> action) {
+    _entryActions.add(action);
   }
 
-  public void AddExitAction(Action1<Transition<TState, TTrigger>> action) throws Exception {
-    _exitActions.add(Enforce.ArgumentNotNull(action, "action"));
+  public void AddExitAction(@Nonnull Action1<Transition<TState, TTrigger>> action) {
+    _exitActions.add(action);
   }
 
-  public void Enter(Transition<TState, TTrigger> transition, Object... entryArgs) throws Exception {
-    Enforce.ArgumentNotNull(transition, "transtion");
-
+  public void Enter(@Nonnull Transition<TState, TTrigger> transition, Object... entryArgs) {
     if (transition.isReentry()) {
       ExecuteEntryActions(transition, entryArgs);
     } else if (!Includes(transition.getSource())) {
@@ -100,9 +97,7 @@ public class StateRepresentation<TState, TTrigger> {
     }
   }
 
-  public void Exit(Transition<TState, TTrigger> transition) throws Exception {
-    Enforce.ArgumentNotNull(transition, "transtion");
-
+  public void Exit(@Nonnull Transition<TState, TTrigger> transition) {
     if (transition.isReentry()) {
       ExecuteExitActions(transition);
     } else if (!Includes(transition.getDestination())) {
@@ -112,15 +107,13 @@ public class StateRepresentation<TState, TTrigger> {
     }
   }
 
-  void ExecuteEntryActions(Transition<TState, TTrigger> transition, Object[] entryArgs) throws Exception {
-    Enforce.ArgumentNotNull(transition, "transtion");
-    Enforce.ArgumentNotNull(entryArgs, "entryArgs");
+  void ExecuteEntryActions(@Nonnull Transition<TState, TTrigger> transition,
+                           @Nonnull Object[] entryArgs) {
     for (Action2<Transition<TState, TTrigger>, Object[]> action : _entryActions)
       action.doIt(transition, entryArgs);
   }
 
-  void ExecuteExitActions(Transition<TState, TTrigger> transition) throws Exception {
-    Enforce.ArgumentNotNull(transition, "transtion");
+  void ExecuteExitActions(@Nonnull Transition<TState, TTrigger> transition) {
     for (Action1<Transition<TState, TTrigger>> action : _exitActions)
       action.doIt(transition);
   }
@@ -147,8 +140,7 @@ public class StateRepresentation<TState, TTrigger> {
     return _state;
   }
 
-  public void AddSubstate(StateRepresentation<TState, TTrigger> substate) throws Exception {
-    Enforce.ArgumentNotNull(substate, "substate");
+  public void AddSubstate(@Nonnull StateRepresentation<TState, TTrigger> substate) {
     _substates.add(substate);
   }
 

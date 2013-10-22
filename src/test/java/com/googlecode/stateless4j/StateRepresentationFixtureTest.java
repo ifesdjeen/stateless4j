@@ -23,10 +23,7 @@ public class StateRepresentationFixtureTest {
             transition = new Transition<State, Trigger>(State.A, State.B, Trigger.X);
     actualTransition = null;
     stateRepresentation.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
-
-
-      public void doIt(Transition<State, Trigger> t, Object[] a)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> t, Object[] a) {
         actualTransition = t;
       }
     });
@@ -40,14 +37,13 @@ public class StateRepresentationFixtureTest {
     Transition<State, Trigger>
             transition = new Transition<State, Trigger>(State.A, State.B, Trigger.X);
     actualTransition = null;
+
     stateRepresentation.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
-
-
-      public void doIt(Transition<State, Trigger> t, Object[] a)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> t, Object[] a) {
         actualTransition = t;
       }
     });
+
     stateRepresentation.Exit(transition);
     Assert.assertNull(actualTransition);
   }
@@ -149,8 +145,7 @@ public class StateRepresentationFixtureTest {
     sub.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
 
 
-      public void doIt(Transition<State, Trigger> t, Object[] a)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> t, Object[] a) {
         executed = true;
       }
     });
@@ -190,8 +185,7 @@ public class StateRepresentationFixtureTest {
     superState.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
 
 
-      public void doIt(Transition<State, Trigger> t, Object[] a)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> t, Object[] a) {
         executed = true;
       }
     });
@@ -221,7 +215,7 @@ public class StateRepresentationFixtureTest {
   }
 
   @Test
-  public void WhenEnteringSubstate_SuperEntryActionsExecuted() throws Exception {
+  public void WhenEnteringSubstate_SuperEntryActionsExecuted() {
     StateRepresentation<State, Trigger> superState = CreateRepresentation(State.A);
     StateRepresentation<State, Trigger> sub = CreateRepresentation(State.B);
     superState.AddSubstate(sub);
@@ -231,8 +225,7 @@ public class StateRepresentationFixtureTest {
     superState.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
 
 
-      public void doIt(Transition<State, Trigger> t, Object[] a)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> t, Object[] a) {
         executed = true;
       }
     });
@@ -267,19 +260,12 @@ public class StateRepresentationFixtureTest {
 
     StateRepresentation<State, Trigger> rep = CreateRepresentation(State.B);
     rep.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
-
-
-      public void doIt(Transition<State, Trigger> arg1, Object[] arg2)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> arg1, Object[] arg2) {
         actual.add(0);
-
       }
     });
     rep.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
-
-
-      public void doIt(Transition<State, Trigger> arg1, Object[] arg2)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> arg1, Object[] arg2) {
         actual.add(1);
 
       }
@@ -355,18 +341,14 @@ public class StateRepresentationFixtureTest {
     subOrder = 0;
     superOrder = 0;
     superState.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
-
-
-      public void doIt(Transition<State, Trigger> arg1, Object[] arg2)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> arg1, Object[] arg2) {
         superOrder = order++;
       }
     });
     sub.AddEntryAction(new Action2<Transition<State, Trigger>, Object[]>() {
 
 
-      public void doIt(Transition<State, Trigger> arg1, Object[] arg2)
-              throws Exception {
+      public void doIt(Transition<State, Trigger> arg1, Object[] arg2) {
         subOrder = order++;
       }
     });

@@ -5,42 +5,43 @@ public class Transition<TState, TTrigger> {
   final TState _destination;
   final TTrigger _trigger;
 
-  /// <summary>
-  /// Construct a transition.
-  /// </summary>
-  /// <param name="source">The state transitioned from.</param>
-  /// <param name="destination">The state transitioned to.</param>
-  /// <param name="trigger">The trigger that caused the transition.</param>
+  /**
+   * Construct a transition.
+   * @param source The state transitioned from.
+   * @param destination The state transitioned to.
+   * @param trigger The trigger that caused the transition.
+   */
   public Transition(TState source, TState destination, TTrigger trigger) {
     _source = source;
     _destination = destination;
     _trigger = trigger;
   }
 
-  /// <summary>
-  /// The state transitioned from.
-  /// </summary>
+  /**
+   * The state transitioned from.
+   */
   public TState getSource() {
     return _source;
   }
 
-  /// <summary>
-  /// The state transitioned to.
-  /// </summary>
+  /**
+   * The state transitioned to.
+   */
   public TState getDestination() {
     return _destination;
   }
 
-  /// <summary>
-  /// The trigger that caused the transition.
-  /// </summary>
+  /**
+   * The trigger that caused the transition.
+   */
   public TTrigger getTrigger() {
     return _trigger;
   }
 
-  /// <summary>
-  /// True if the transition is a re-entry, i.e. the identity transition.
-  /// </summary>
+  /**
+   * True if the transition is a re-entry, i.e. the identity transition.
+   * @return
+   */
   public Boolean isReentry() {
     return getSource().equals(getDestination());
   }
