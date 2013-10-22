@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.googlecode.stateless4j.delegates.Action1;
 import com.googlecode.stateless4j.delegates.Action2;
 import com.googlecode.stateless4j.delegates.Func;
@@ -255,10 +253,9 @@ public class StateMachine<TState, TTrigger> {
       parameters.add(tTrigger.toString());
     }
 
-    return String.format(
-                                "StateMachine {{ State = {0}, PermittedTriggers = {{ {1} }}}}",
-                                getState(),
-                                StringUtils.join(parameters, ", "));
+    return String.format("StateMachine {{ State = {0}, PermittedTriggers = {{ {1} }}}}",
+                         getState(),
+                         parameters.toString());
   }
 
   /// <summary>
