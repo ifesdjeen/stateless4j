@@ -41,9 +41,9 @@ Maven
 
 ```xml
 <dependency>
-        <groupId>com.googlecode</groupId>
+        <groupId>ifesdjeen</groupId>
         <artifactId>stateless4j</artifactId>
-        <version>1.0</version>
+        <version>0.1.0-SNAPSHOT</version>
 </dependency>
 ```
 
